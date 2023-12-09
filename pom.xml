@@ -12,6 +12,8 @@
   <modules>
     <module>order-service</module>
     <module>inventory-service</module>
+      <module>eureka-server</module>
+      <module>user-information-service</module>
   </modules>
 
   <properties>

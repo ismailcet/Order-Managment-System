@@ -1,10 +1,10 @@
 spring:
   application:
-    name: order-service
+    name: user-information-service
   datasource:
     username: postgres
     password: postgres123
-    url: jdbc:postgresql://localhost:5431/order
+    url: jdbc:postgresql://localhost:5431/user
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,13 +19,5 @@ spring:
         defaultZone: http://localhost:8761/eureka
       fetch-registry: true
       register-with-eureka: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      order: order-topic
-      inventory: inventory-topic
-      cargo: cargo-topic
-    consumer:
-      group-id: order-consumer
 server:
-  port: 8080
+  port: 8082

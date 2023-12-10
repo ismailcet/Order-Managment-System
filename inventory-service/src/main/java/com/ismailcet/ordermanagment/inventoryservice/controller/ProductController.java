@@ -28,7 +28,7 @@ public class ProductController {
         response.setProductDTO(productDTO);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-    @PostMapping(path = "checkProductId")
+    @PostMapping(path = "/checkProductId")
     public ResponseEntity<CheckProductResponse> checkProductControl(@RequestBody CheckProductRequest request){
         CheckProductResponse response = new CheckProductResponse();
         response.setResult(productService.checkProductControl(request));

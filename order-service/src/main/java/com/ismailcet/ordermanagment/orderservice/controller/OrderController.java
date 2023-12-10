@@ -1,5 +1,6 @@
 package com.ismailcet.ordermanagment.orderservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ismailcet.ordermanagment.orderservice.controller.request.CreateOrderRequest;
 import com.ismailcet.ordermanagment.orderservice.controller.response.CreateOrderResponse;
 import com.ismailcet.ordermanagment.orderservice.dto.OrderDTO;
@@ -21,7 +22,7 @@ public class OrderController {
     }
 
     @PostMapping(path = "/createOrder")
-    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest request){
+    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest request) throws JsonProcessingException {
         CreateOrderResponse response = new CreateOrderResponse();
         OrderDTO orderDTO = orderService.createOrder(request);
         response.setOrderDTO(orderDTO);

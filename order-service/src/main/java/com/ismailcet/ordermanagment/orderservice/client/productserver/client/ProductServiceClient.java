@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "inventory-service",path = "/api/product")
 public interface ProductServiceClient {
-    @PostMapping(path = "checkProductId")
+    @PostMapping(path = "/checkProductId")
     public ResponseEntity<CheckProductClientResponse> checkProductControl(@RequestBody CheckProductClientRequest request);
 }

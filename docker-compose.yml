@@ -10,42 +10,45 @@ services:
       - '5431:5432'
     volumes:
       - postgres_db:/var/lib/postgresql/data
-  zookeeper:
-    image: "docker.io/bitnami/zookeeper:3"
-    ports:
-      - "2181:2181"
-    volumes:
-      - "zookeeper_data:/bitnami"
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: "docker.io/bitnami/kafka:2-debian-10"
-    ports:
-      - "9092:9092"
-    expose:
-      - "9093"
-    volumes:
-      - "kafka_data:/bitnami"
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka:9093,OUTSIDE://localhost:9092
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      - KAFKA_LISTENERS=INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
-      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-broker
     depends_on:
-      - zookeeper
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
+      - zookeeper  # Kafka'nin calisabilmesi icin ZooKeeper hizmetine baglidir.
     ports:
-      - "9090:8080"
+      - 59092:59092  # Kafka'ya disaridan erisim saglar.
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181  # Kafka'nin ZooKeeper ile iletisim kurmasini saglar.
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:59092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1  # Offset konularinin cogaltma faktorunu ayarlar.
+
+    # ZooKeeper hizmeti, Kafka icin koordinasyon ve konfigurasyon depolama saglar.
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZK_SERVER_HEAP: "-Xmx256M -Xms256M"  # ZooKeeper'in bellek yapilandirmalarini belirler.
+    ports:
+        - 52181:2181  # ZooKeeper'a disaridan erisim saglar.
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "9091:8080"  # Kafka UI'ya disaridan erisim saglar.
     restart: always
+    depends_on:
+      - kafka
+      - zookeeper
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=localhost:2181
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
 volumes:
   postgres_db:
     driver: local

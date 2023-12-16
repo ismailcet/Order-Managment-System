@@ -51,6 +51,7 @@ public class OrderService {
         ObjectMapper mapper = new ObjectMapper();
         String reqJson = mapper.writeValueAsString(order);
         kafkaTemplate.send(inventoryTopic, reqJson);
+        kafkaTemplate.send(orderTopic,reqJson);
     }
 
     private void controlUserIdHave(CreateOrderRequest request, Order order) {

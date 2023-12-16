@@ -19,5 +19,9 @@ spring:
         defaultZone: http://localhost:8761/eureka
       fetch-registry: true
       register-with-eureka: true
+  kafka:
+    bootstrap-servers: localhost:59092
+    consumer:
+      group-id: user-information-consumer
 server:
   port: 8082

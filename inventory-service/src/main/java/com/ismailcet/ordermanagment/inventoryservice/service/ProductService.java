@@ -9,6 +9,7 @@ import com.ismailcet.ordermanagment.inventoryservice.dto.Order;
 import com.ismailcet.ordermanagment.inventoryservice.dto.ProductDTO;
 import com.ismailcet.ordermanagment.inventoryservice.entity.Product;
 import com.ismailcet.ordermanagment.inventoryservice.repository.ProductRepository;
+import com.ismailcet.ordermanagment.inventoryservice.utils.StringToJsonConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,7 @@ public class ProductService {
 
     @KafkaListener(topics = "inventory-topic",groupId = "inventory-consumer")
     private void decreaseProductItemAfterOrder(String order) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode parser = mapper.readTree(order);
+        JsonNode parser = StringToJsonConverter.stringConverter(order);
         log.info("Created Order : {}",parser);
         Product product = productRepository.findById(parser.path("productId").asLong()).get();
         log.info("Decreased Product : {}",product);

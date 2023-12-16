@@ -1,10 +1,10 @@
 spring:
   application:
-    name: order-service
+    name: cargo-service
   datasource:
     username: postgres
     password: postgres123
-    url: jdbc:postgresql://localhost:5431/order
+    url: jdbc:postgresql://localhost:5431/cargo
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,10 +22,8 @@ spring:
   kafka:
     bootstrap-servers: localhost:59092
     producer:
-      order: order-topic
-      inventory: inventory-topic
       cargo: cargo-topic
     consumer:
-      group-id: order-consumer
+      group-id: cargo-consumer
 server:
-  port: 8080
+  port: 8083

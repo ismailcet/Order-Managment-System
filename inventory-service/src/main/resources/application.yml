@@ -20,7 +20,7 @@ spring:
       fetch-registry: true
       register-with-eureka: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:59092
     consumer:
       group-id: inventory-consumer
 server:

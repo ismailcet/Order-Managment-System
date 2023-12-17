@@ -76,4 +76,36 @@ public class UserInformationService {
         informationRepository.save(information);
         log.info("Send SMS :{}",user.getEmail());
     }
+    @KafkaListener(topics = "cargo-topic",groupId ="user-information-consumer")
+    private void sendEmailUserAboutCargoUpdate(String order) throws JsonProcessingException {
+        JsonNode cargo = StringToJsonConverter.stringToJsonConverter(order);
+        log.info("Updated Cargo Status :{}",cargo);
+        User user = userRepository.findById(cargo.path("userId").asLong()).get();
+        Information information = Information.builder()
+                .orderId(cargo.path("orderId").asLong())
+                .user(user)
+                .type(InformationType.EMAIL)
+                .createdDate(LocalDateTime.now())
+                .cargoStatus(cargo.path("status").asText())
+                .build();
+        log.info("Your Order {} has been shipped : ",cargo.path("orderId"));
+        log.info( "Order User Information :",user.getEmail());
+        informationRepository.save(information);
+    }
+    @KafkaListener(topics = "cargo-topic",groupId = "user-information-consumer-sms")
+    private void sendSmsUserAboutCargoUpdate(String order) throws JsonProcessingException {
+        JsonNode cargo = StringToJsonConverter.stringToJsonConverter(order);
+        log.info("Updated Cargo Status :{}",cargo);
+        User user = userRepository.findById(cargo.path("userId").asLong()).get();
+        Information information = Information.builder()
+                .orderId(cargo.path("orderId").asLong())
+                .user(user)
+                .type(InformationType.SMS)
+                .createdDate(LocalDateTime.now())
+                .cargoStatus(cargo.path("status").asText())
+                .build();
+        log.info("Your Order {} has been shipped : ",cargo.path("orderId"));
+        log.info( "Order User Information :",user);
+        informationRepository.save(information);
+    }
 }

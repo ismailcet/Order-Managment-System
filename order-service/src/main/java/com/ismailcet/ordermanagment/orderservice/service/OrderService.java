@@ -1,6 +1,7 @@
 package com.ismailcet.ordermanagment.orderservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ismailcet.ordermanagment.orderservice.client.productserver.ProductServiceClientImpl;
 import com.ismailcet.ordermanagment.orderservice.client.userservice.UserServiceClientImpl;
@@ -9,11 +10,15 @@ import com.ismailcet.ordermanagment.orderservice.dto.OrderDTO;
 import com.ismailcet.ordermanagment.orderservice.entity.Order;
 import com.ismailcet.ordermanagment.orderservice.entity.Status;
 import com.ismailcet.ordermanagment.orderservice.repository.OrderRepository;
+import com.ismailcet.ordermanagment.orderservice.utils.StringToJsonConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductServiceClientImpl productServiceClient;
@@ -45,6 +50,16 @@ public class OrderService {
         sendKafkaTemplate(order);
         OrderDTO orderDTO = new OrderDTO(order);
         return orderDTO;
+    }
+
+    @KafkaListener(topics = "cargo-topic",groupId = "order-consumer")
+    private void updateOrder(String req) throws JsonProcessingException {
+        JsonNode request = StringToJsonConverter.stringConverter(req);
+        Order order = orderRepository.findById(request.path("orderId").asLong()).get();
+        order.setStatus(Status.CARGO);
+        order.setCargoStatus(request.path("status").asText());
+        log.info("Cargo Status Update :{}",order.getId(),request.path("status"));
+        orderRepository.save(order);
     }
 
     private void sendKafkaTemplate(Order order) throws JsonProcessingException {

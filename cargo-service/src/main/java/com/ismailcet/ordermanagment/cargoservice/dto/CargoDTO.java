@@ -10,11 +10,13 @@ import lombok.Setter;
 public class CargoDTO {
     private Long cargoId;
     private Long orderId;
+    private Long userId;
     private CargoStatus status;
 
     public CargoDTO(Cargo cargo){
         this.cargoId = cargo.getId();
         this.orderId = cargo.getOrderId();
+        this.userId = cargo.getUserId();
         this.status = cargo.getStatus();
     }
 }

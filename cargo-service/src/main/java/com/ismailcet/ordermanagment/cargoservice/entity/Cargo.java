@@ -20,6 +20,8 @@ public class Cargo {
     private Long id;
     @Column(name = "orderId")
     private Long orderId;
+    @Column(name = "userId")
+    private Long userId;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private CargoStatus status;

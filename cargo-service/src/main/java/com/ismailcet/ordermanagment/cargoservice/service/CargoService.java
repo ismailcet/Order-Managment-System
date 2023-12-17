@@ -36,6 +36,7 @@ public class CargoService {
         log.info("Created Order:{} ",jsonOrder);
         Cargo cargo = Cargo.builder()
                 .orderId(jsonOrder.path("id").asLong())
+                .userId(jsonOrder.path("userId").asLong())
                 .status(CargoStatus.PREPARING)
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())

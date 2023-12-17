@@ -26,6 +26,8 @@ public class Information {
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private InformationType type;
+    @Column(name = "cargoStatus")
+    private String cargoStatus;
     @Column(name = "createdDate")
     private LocalDateTime createdDate;
 }

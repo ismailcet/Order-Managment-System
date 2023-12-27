@@ -56,8 +56,9 @@ public class OrderService {
     private void updateOrder(String req) throws JsonProcessingException {
         JsonNode request = StringToJsonConverter.stringConverter(req);
         Order order = orderRepository.findById(request.path("orderId").asLong()).get();
-        order.setStatus(Status.CARGO);
-        order.setCargoStatus(request.path("status").asText());
+        Status status = Status.valueOf(request.path("status").asText());
+        order.setStatus(status);
+        order.setCargoStatus(status.name());
         log.info("Cargo Status Update :{}",order.getId(),request.path("status"));
         orderRepository.save(order);
     }
